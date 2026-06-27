@@ -16,17 +16,17 @@
     min-height: 100vh;
     user-select: none;
   }
-  /* 外层面板：模拟 JPanel + EmptyBorder(4,4,4,4) + RaisedBevelBorder */
+  /* 主窗口：模拟 JFrame + ContentPane */
   #game-wrapper {
     background: #c0c0c0;
     padding: 4px;
-    /* RaisedBevelBorder: 左上角白，右下角深灰 */
+    /* 模拟 BorderFactory.createBevelBorder(BevelBorder.RAISED) */
     border-top: 2px solid #ffffff;
     border-left: 2px solid #ffffff;
     border-right: 2px solid #808080;
     border-bottom: 2px solid #808080;
   }
-  /* 顶部状态栏面板：模拟 LoweredBevelBorder（凹陷） */
+  /* 顶部面板：BorderLayout + EmptyBorder(4,4,4,4) */
   #top-bar {
     display: flex;
     justify-content: space-between;
@@ -34,12 +34,13 @@
     background: #c0c0c0;
     padding: 4px;
     margin-bottom: 6px;
-    /* LoweredBevelBorder: 左上角深灰，右下角白 */
+    /* LoweredBevelBorder */
     border-top: 2px solid #808080;
     border-left: 2px solid #808080;
     border-right: 2px solid #ffffff;
     border-bottom: 2px solid #ffffff;
   }
+  /* LED 显示：对应 led() 方法 */
   .led {
     font-family: 'Consolas', 'Courier New', monospace;
     font-size: 28px;
@@ -48,20 +49,23 @@
     background: #000000;
     padding: 2px 6px;
     min-width: 72px;
+    height: 36px;
     text-align: center;
     letter-spacing: 2px;
-    line-height: 1.2;
+    line-height: 32px;
+    display: inline-block;
   }
-  /* 笑脸按钮：模拟未按下的 JButton（凸起） */
+  /* 笑脸按钮：对应 face JButton
+     注意：Swing 默认的 JButton 有 3D 凸起效果 + 按下凹陷效果 */
   #face-btn {
-    font-size: 20px;
+    font-family: 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+    font-size: 18px;
     width: 36px;
     height: 36px;
-    line-height: 30px;
     text-align: center;
     background: #c0c0c0;
     border: none;
-    /* RaisedBevelBorder: 凸起 */
+    /* 凸起效果 */
     border-top: 2px solid #ffffff;
     border-left: 2px solid #ffffff;
     border-right: 2px solid #808080;
@@ -71,8 +75,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    outline: none;
+    /* 消除 focus 样式 */
   }
-  /* 按下时模拟 LoweredBevelBorder（凹陷） */
+  #face-btn:focus {
+    outline: none;
+  }
+  /* 按下效果 */
   #face-btn:active {
     border-top: 2px solid #808080;
     border-left: 2px solid #808080;
@@ -81,69 +90,70 @@
     padding-top: 1px;
     padding-left: 1px;
   }
-  /* 棋盘面板：模拟 LoweredBevelBorder（凹陷） */
+  /* 棋盘面板：对应 buildGrid 的 JPanel
+     LoweredBevelBorder + GridLayout + setPreferredSize */
   #board {
     display: grid;
     grid-template-columns: repeat(30, 28px);
     grid-template-rows: repeat(16, 28px);
     background: #c0c0c0;
-    /* LoweredBevelBorder: 左上角深灰，右下角白 */
+    /* LoweredBevelBorder */
     border-top: 2px solid #808080;
     border-left: 2px solid #808080;
     border-right: 2px solid #ffffff;
     border-bottom: 2px solid #ffffff;
+    width: 840px;  /* 30 * 28 */
+    height: 448px; /* 16 * 28 */
   }
-  /* 格子：模拟未按下的 JButton（凸起） */
+  /* 未翻开的格子：对应 JButton
+     默认有凸起边框，Arial Bold 14 */
   .cell {
     width: 28px;
     height: 28px;
+    font-family: 'Arial', sans-serif;
+    font-size: 14px;
+    font-weight: bold;
     background: #c0c0c0;
+    color: #000000;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
-    font-weight: bold;
     cursor: pointer;
     user-select: none;
-    line-height: 1;
     border: none;
-    /* RaisedBevelBorder: 凸起外边框 */
+    /* 凸起效果（模拟未按下的 JButton） */
     border-top: 2px solid #ffffff;
     border-left: 2px solid #ffffff;
     border-right: 2px solid #808080;
     border-bottom: 2px solid #808080;
+    /* 消除 focus 样式 */
+    outline: none;
   }
-  /* 翻开的格子：边框消失，背景 LIGHT_GRAY */
+  /* 翻开的格子：对应 setBorderPainted(false) + setBackground(Color.LIGHT_GRAY) */
   .cell.open {
     border: none;
     background: #d3d3d3; /* Color.LIGHT_GRAY */
     cursor: default;
   }
-  /* 雷：红色背景 */
+  /* 雷：对应 value == -1 时的红色背景 */
   .cell.mine {
     background: #ff0000;
+    color: #000000;
   }
   /* 插旗 */
-  .cell.flag::after {
-    content: 'F';
+  .cell.flag {
     color: #ff0000;
-    font-size: 16px;
   }
-  /* 错误旗 */
-  .cell.wrong-flag::after {
-    content: 'X';
-    color: #000000;
-    font-size: 16px;
-  }
-  /* 数字颜色，对应 MineView.COLORS */
-  .num-1 { color: #0000ff; } /* Color.BLUE */
-  .num-2 { color: #008000; } /* new Color(0, 128, 0) */
-  .num-3 { color: #ff0000; } /* Color.RED */
-  .num-4 { color: #000080; } /* new Color(0, 0, 128) */
-  .num-5 { color: #800000; } /* new Color(128, 0, 0) */
-  .num-6 { color: #008080; } /* new Color(0, 128, 128) */
-  .num-7 { color: #000000; } /* Color.BLACK */
-  .num-8 { color: #808080; } /* Color.GRAY */
+  /* 数字颜色：对应 COLORS 数组 */
+  .num-1 { color: #0000ff; }
+  .num-2 { color: #008000; }
+  .num-3 { color: #ff0000; }
+  .num-4 { color: #000080; }
+  .num-5 { color: #800000; }
+  .num-6 { color: #008080; }
+  .num-7 { color: #000000; }
+  .num-8 { color: #808080; }
+  /* 状态栏 */
   #status-bar {
     margin-top: 8px;
     text-align: center;
@@ -324,6 +334,7 @@ function renderBoard() {
         }
       } else if (flag[r][c]) {
         cell.classList.add('flag');
+        cell.textContent = 'F';
       } else if (over && mine[r][c]) {
         // show remaining mines after lose
         cell.classList.add('open');
