@@ -1,0 +1,39 @@
+### IntelliJ IDEA ###
+.idea/
+out/
+out11/
+mineru_output/
+!**/src/main/**/out/
+!**/src/test/**/out/
+.kotlin
+
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+### Local agent files ###
+.claude/
+.codex/
+.hexstrike_data/
+hexstrike_envs/
+
+### Mac OS ###
+.DS_Store
