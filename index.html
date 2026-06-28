@@ -191,13 +191,19 @@
     outline: none;
     -webkit-touch-callout: none;
   }
-  /* 翻开格子：完全消失，仅文字浮在背景 */
+  /* 翻开格子：完全消失，背景完全可见 */
   .cell.open {
-    border: none;
-    background: transparent;
+    border: none !important;
+    background: transparent !important;
+    color: transparent !important;
+    text-shadow: none !important;
     cursor: default;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
+  }
+  /* 翻开格子内的数字/内容也隐藏 */
+  .cell.open * {
+    display: none;
   }
   /* 雷：淡红背景 */
   .cell.mine {
