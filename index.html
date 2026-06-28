@@ -2,10 +2,10 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>扫雷2026 HTML5</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   body {
     font-family: 'Microsoft YaHei', sans-serif;
     background: #c0c0c0;
@@ -15,18 +15,71 @@
     justify-content: center;
     min-height: 100vh;
     user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
   }
-  /* 主窗口：模拟 JFrame + ContentPane */
   #game-wrapper {
     background: #c0c0c0;
     padding: 4px;
-    /* 模拟 BorderFactory.createBevelBorder(BevelBorder.RAISED) */
     border-top: 2px solid #ffffff;
     border-left: 2px solid #ffffff;
     border-right: 2px solid #808080;
     border-bottom: 2px solid #808080;
   }
-  /* 顶部面板：BorderLayout + EmptyBorder(4,4,4,4) */
+  /* 难度选择器 */
+  #difficulty-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    padding: 4px;
+    background: #c0c0c0;
+  }
+  .diff-btn {
+    font-family: 'Arial', sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 4px 10px;
+    background: #c0c0c0;
+    border: none;
+    border-top: 2px solid #ffffff;
+    border-left: 2px solid #ffffff;
+    border-right: 2px solid #808080;
+    border-bottom: 2px solid #808080;
+    cursor: pointer;
+    color: #000000;
+  }
+  .diff-btn.active {
+    border-top: 2px solid #808080;
+    border-left: 2px solid #808080;
+    border-right: 2px solid #ffffff;
+    border-bottom: 2px solid #ffffff;
+    background: #a0a0a0;
+  }
+  /* 标记模式按钮（移动端专用） */
+  #flag-mode-btn {
+    font-family: 'Arial', sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 4px 10px;
+    background: #c0c0c0;
+    border: none;
+    border-top: 2px solid #ffffff;
+    border-left: 2px solid #ffffff;
+    border-right: 2px solid #808080;
+    border-bottom: 2px solid #808080;
+    cursor: pointer;
+    color: #000000;
+    margin-left: 12px;
+  }
+  #flag-mode-btn.active {
+    border-top: 2px solid #808080;
+    border-left: 2px solid #808080;
+    border-right: 2px solid #ffffff;
+    border-bottom: 2px solid #ffffff;
+    background: #ffcccc;
+  }
   #top-bar {
     display: flex;
     justify-content: space-between;
@@ -34,13 +87,11 @@
     background: #c0c0c0;
     padding: 4px;
     margin-bottom: 6px;
-    /* LoweredBevelBorder */
     border-top: 2px solid #808080;
     border-left: 2px solid #808080;
     border-right: 2px solid #ffffff;
     border-bottom: 2px solid #ffffff;
   }
-  /* LED 显示：对应 led() 方法 */
   .led {
     font-family: 'Consolas', 'Courier New', monospace;
     font-size: 28px;
@@ -55,8 +106,6 @@
     line-height: 32px;
     display: inline-block;
   }
-  /* 笑脸按钮：对应 face JButton
-     注意：Swing 默认的 JButton 有 3D 凸起效果 + 按下凹陷效果 */
   #face-btn {
     font-family: 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
     font-size: 18px;
@@ -65,7 +114,6 @@
     text-align: center;
     background: #c0c0c0;
     border: none;
-    /* 凸起效果 */
     border-top: 2px solid #ffffff;
     border-left: 2px solid #ffffff;
     border-right: 2px solid #808080;
@@ -76,12 +124,8 @@
     align-items: center;
     justify-content: center;
     outline: none;
-    /* 消除 focus 样式 */
   }
-  #face-btn:focus {
-    outline: none;
-  }
-  /* 按下效果 */
+  #face-btn:focus { outline: none; }
   #face-btn:active {
     border-top: 2px solid #808080;
     border-left: 2px solid #808080;
@@ -90,23 +134,15 @@
     padding-top: 1px;
     padding-left: 1px;
   }
-  /* 棋盘面板：对应 buildGrid 的 JPanel
-     LoweredBevelBorder + GridLayout + setPreferredSize */
   #board {
     display: grid;
-    grid-template-columns: repeat(30, 28px);
-    grid-template-rows: repeat(16, 28px);
     background: #c0c0c0;
-    /* LoweredBevelBorder */
     border-top: 2px solid #808080;
     border-left: 2px solid #808080;
     border-right: 2px solid #ffffff;
     border-bottom: 2px solid #ffffff;
-    width: 840px;  /* 30 * 28 */
-    height: 448px; /* 16 * 28 */
+    /* width/height 由 JS 动态设置 */
   }
-  /* 未翻开的格子：对应 JButton
-     默认有凸起边框，Arial Bold 14 */
   .cell {
     width: 28px;
     height: 28px;
@@ -121,30 +157,20 @@
     cursor: pointer;
     user-select: none;
     border: none;
-    /* 凸起效果（模拟未按下的 JButton） */
     border-top: 2px solid #ffffff;
     border-left: 2px solid #ffffff;
     border-right: 2px solid #808080;
     border-bottom: 2px solid #808080;
-    /* 消除 focus 样式 */
     outline: none;
+    -webkit-touch-callout: none;
   }
-  /* 翻开的格子：对应 setBorderPainted(false) + setBackground(Color.LIGHT_GRAY) */
   .cell.open {
     border: none;
-    background: #d3d3d3; /* Color.LIGHT_GRAY */
+    background: #d3d3d3;
     cursor: default;
   }
-  /* 雷：对应 value == -1 时的红色背景 */
-  .cell.mine {
-    background: #ff0000;
-    color: #000000;
-  }
-  /* 插旗 */
-  .cell.flag {
-    color: #ff0000;
-  }
-  /* 数字颜色：对应 COLORS 数组 */
+  .cell.mine { background: #ff0000; color: #000000; }
+  .cell.flag { color: #ff0000; }
   .num-1 { color: #0000ff; }
   .num-2 { color: #008000; }
   .num-3 { color: #ff0000; }
@@ -153,17 +179,29 @@
   .num-6 { color: #008080; }
   .num-7 { color: #000000; }
   .num-8 { color: #808080; }
-  /* 状态栏 */
   #status-bar {
     margin-top: 8px;
     text-align: center;
     font-size: 12px;
     color: #404040;
   }
+  /* 移动端：缩小格子 */
+  @media (max-width: 900px) {
+    .cell { width: 24px; height: 24px; font-size: 12px; }
+  }
+  @media (max-width: 400px) {
+    .cell { width: 20px; height: 20px; font-size: 10px; }
+  }
 </style>
 </head>
 <body>
 <div id="game-wrapper">
+  <div id="difficulty-bar">
+    <button class="diff-btn" data-diff="beginner">初级 9×10</button>
+    <button class="diff-btn" data-diff="intermediate">中级 16×16</button>
+    <button class="diff-btn active" data-diff="expert">高级 16×30</button>
+    <button id="flag-mode-btn">🚩 标记模式</button>
+  </div>
   <div id="top-bar">
     <div id="mine-count" class="led">099</div>
     <div id="face-btn">🙂</div>
@@ -174,39 +212,56 @@
 </div>
 
 <script>
-const ROWS = 16;
-const COLS = 30;
-const MINES = 99;
-const DIRS = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+// 难度配置
+const DIFFICULTIES = {
+  beginner:     { ROWS: 10, COLS: 9,  MINES: 10 },
+  intermediate: { ROWS: 16, COLS: 16, MINES: 40 },
+  expert:       { ROWS: 16, COLS: 30, MINES: 99 }
+};
 
-let board = [];       // -1=mine, 0-8=count
-let open = [];        // boolean
-let flag = [];        // boolean
-let mine = [];        // boolean (mine positions)
-let placed = false;
-let over = false;
-let won = false;
-let flags = 0;
-let seconds = 0;
-let timerInterval = null;
+// 动态获取当前难度参数
+function getConfig() {
+  return DIFFICULTIES[currentDiff];
+}
+
+let currentDiff = 'expert';
+let ROWS, COLS, MINES;
+let board = [], open = [], flag = [], mine = [];
+let placed = false, over = false, won = false;
+let flags = 0, seconds = 0, timerInterval = null;
+let flagMode = false; // 标记模式开关（移动端用）
 
 const boardEl = document.getElementById('board');
 const faceBtn = document.getElementById('face-btn');
 const mineCountEl = document.getElementById('mine-count');
 const timerEl = document.getElementById('timer');
+const flagModeBtn = document.getElementById('flag-mode-btn');
+
+const DIRS = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+
+function setDifficulty(diff) {
+  currentDiff = diff;
+  document.querySelectorAll('.diff-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.diff === diff);
+  });
+  init();
+}
 
 function init() {
+  const cfg = getConfig();
+  ROWS = cfg.ROWS; COLS = cfg.COLS; MINES = cfg.MINES;
   board = Array(ROWS).fill().map(() => Array(COLS).fill(0));
   open = Array(ROWS).fill().map(() => Array(COLS).fill(false));
   flag = Array(ROWS).fill().map(() => Array(COLS).fill(false));
   mine = Array(ROWS).fill().map(() => Array(COLS).fill(false));
-  placed = false;
-  over = false;
-  won = false;
-  flags = 0;
-  seconds = 0;
-  clearInterval(timerInterval);
-  timerInterval = null;
+  placed = false; over = false; won = false; flags = 0; seconds = 0;
+  clearInterval(timerInterval); timerInterval = null;
+  // 动态调整棋盘网格
+  const cellSize = window.innerWidth <= 400 ? 20 : (window.innerWidth <= 900 ? 24 : 28);
+  boardEl.style.gridTemplateColumns = `repeat(${COLS}, ${cellSize}px)`;
+  boardEl.style.gridTemplateRows = `repeat(${ROWS}, ${cellSize}px)`;
+  boardEl.style.width = `${COLS * cellSize}px`;
+  boardEl.style.height = `${ROWS * cellSize}px`;
   updateTopBar();
   renderBoard();
 }
@@ -224,7 +279,6 @@ function placeMines(safeR, safeC) {
     board[r][c] = -1;
     count++;
   }
-  // count mines
   for (let r = 0; r < ROWS; r++) {
     for (let c = 0; c < COLS; c++) {
       if (board[r][c] === -1) continue;
@@ -256,10 +310,8 @@ function checkWin() {
 }
 
 function finish(success) {
-  over = true;
-  won = success;
-  clearInterval(timerInterval);
-  timerInterval = null;
+  over = true; won = success;
+  clearInterval(timerInterval); timerInterval = null;
   if (!success) {
     for (let r = 0; r < ROWS; r++)
       for (let c = 0; c < COLS; c++)
@@ -273,14 +325,10 @@ function finish(success) {
 
 function handleOpen(r, c) {
   if (over || open[r][c] || flag[r][c]) return;
-  if (!placed) {
-    placeMines(r, c);
-    startTimer();
-  }
+  if (!placed) { placeMines(r, c); startTimer(); }
   open[r][c] = true;
-  if (board[r][c] === -1) {
-    finish(false);
-  } else {
+  if (board[r][c] === -1) { finish(false); }
+  else {
     if (board[r][c] === 0) spread(r, c);
     if (checkWin()) finish(true);
   }
@@ -290,23 +338,15 @@ function handleOpen(r, c) {
 
 function handleFlag(r, c) {
   if (over || open[r][c]) return;
-  if (flag[r][c]) {
-    flag[r][c] = false;
-    flags--;
-  } else {
-    flag[r][c] = true;
-    flags++;
-  }
+  if (flag[r][c]) { flag[r][c] = false; flags--; }
+  else { flag[r][c] = true; flags++; }
   updateTopBar();
   renderBoard();
 }
 
 function startTimer() {
   if (timerInterval) return;
-  timerInterval = setInterval(() => {
-    seconds = Math.min(seconds + 1, 999);
-    updateTopBar();
-  }, 1000);
+  timerInterval = setInterval(() => { seconds = Math.min(seconds + 1, 999); updateTopBar(); }, 1000);
 }
 
 function updateTopBar() {
@@ -321,35 +361,64 @@ function renderBoard() {
     for (let c = 0; c < COLS; c++) {
       const cell = document.createElement('div');
       cell.className = 'cell';
-      cell.dataset.r = r;
-      cell.dataset.c = c;
+      cell.dataset.r = r; cell.dataset.c = c;
       if (open[r][c]) {
         cell.classList.add('open');
-        if (mine[r][c]) {
-          cell.classList.add('mine');
-          cell.textContent = '*';
-        } else if (board[r][c] > 0) {
-          cell.textContent = board[r][c];
-          cell.classList.add('num-' + board[r][c]);
-        }
-      } else if (flag[r][c]) {
-        cell.classList.add('flag');
-        cell.textContent = 'F';
-      } else if (over && mine[r][c]) {
-        // show remaining mines after lose
-        cell.classList.add('open');
-        cell.textContent = '*';
-      }
-      // mouse events
+        if (mine[r][c]) { cell.classList.add('mine'); cell.textContent = '*'; }
+        else if (board[r][c] > 0) { cell.textContent = board[r][c]; cell.classList.add('num-' + board[r][c]); }
+      } else if (flag[r][c]) { cell.classList.add('flag'); cell.textContent = 'F'; }
+      else if (over && mine[r][c]) { cell.classList.add('open'); cell.textContent = '*'; }
+
+      // 桌面端鼠标事件
       cell.addEventListener('mousedown', (e) => {
         if (e.button === 0) handleOpen(r, c);
         else if (e.button === 2) handleFlag(r, c);
       });
       cell.addEventListener('contextmenu', e => e.preventDefault());
+
+      // 移动端触摸事件：长按插旗，短按翻格
+      let touchStartTime = 0;
+      let touchTimer = null;
+      cell.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        touchStartTime = Date.now();
+        touchTimer = setTimeout(() => {
+          handleFlag(r, c);
+          touchTimer = null;
+        }, 500);
+      }, { passive: false });
+      cell.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        if (touchTimer) {
+          clearTimeout(touchTimer);
+          touchTimer = null;
+          const elapsed = Date.now() - touchStartTime;
+          if (elapsed < 500) {
+            if (flagMode) handleFlag(r, c);
+            else handleOpen(r, c);
+          }
+        }
+      });
+      cell.addEventListener('touchmove', (e) => {
+        if (touchTimer) { clearTimeout(touchTimer); touchTimer = null; }
+      });
+
       boardEl.appendChild(cell);
     }
   }
 }
+
+// 难度按钮事件
+document.querySelectorAll('.diff-btn').forEach(btn => {
+  btn.addEventListener('click', () => setDifficulty(btn.dataset.diff));
+});
+
+// 标记模式切换
+flagModeBtn.addEventListener('click', () => {
+  flagMode = !flagMode;
+  flagModeBtn.classList.toggle('active', flagMode);
+  flagModeBtn.textContent = flagMode ? '🚩 标记中' : '🚩 标记模式';
+});
 
 faceBtn.addEventListener('click', init);
 
