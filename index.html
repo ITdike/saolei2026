@@ -20,17 +20,19 @@
     touch-action: manipulation;
     position: relative;
   }
-  /* 深色遮罩层，确保游戏面板可读 */
+  /* 深色遮罩层 */
   body::before {
     content: '';
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(10, 12, 20, 0.4);
+    background: rgba(10, 12, 20, 0.2);
     z-index: -1;
   }
-  /* 克苏鲁主窗口：暗紫石板，适度提亮 + 半透明 */
+  /* 克苏鲁主窗口：毛玻璃 */
   #game-wrapper {
-    background: rgba(30, 31, 46, 0.85);
+    background: rgba(30, 31, 46, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     padding: 6px;
     border-top: 2px solid #4a4a6e;
     border-left: 2px solid #4a4a6e;
