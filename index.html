@@ -8,12 +8,8 @@
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   body {
     font-family: 'Microsoft YaHei', sans-serif;
-    /* 克苏鲁深海：适度提亮 */
-    background-color: #0f1118;
-    background-image:
-      radial-gradient(ellipse at 20% 80%, #14162a 0%, transparent 60%),
-      radial-gradient(ellipse at 80% 20%, #16182e 0%, transparent 60%),
-      radial-gradient(circle at 50% 50%, #121420 0%, #0a0c14 100%);
+    /* 克苏鲁深海：Cthulhu Rising 背景图 */
+    background: #0f1118 url('bg.jpg') no-repeat center/cover;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -22,6 +18,15 @@
     user-select: none;
     -webkit-user-select: none;
     touch-action: manipulation;
+    position: relative;
+  }
+  /* 深色遮罩层，确保游戏面板可读 */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(10, 12, 20, 0.7);
+    z-index: -1;
   }
   /* 克苏鲁主窗口：暗紫石板，适度提亮 */
   #game-wrapper {
