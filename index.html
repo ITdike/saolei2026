@@ -9,7 +9,7 @@
   body {
     font-family: 'Microsoft YaHei', sans-serif;
     /* 克苏鲁深海：Cthulhu Rising 背景图 */
-    background: #0f1118 url('bg.jpg') no-repeat center/cover;
+    background: #0f1118 url('bg.jpg') no-repeat center/cover fixed;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -25,12 +25,12 @@
     content: '';
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(10, 12, 20, 0.7);
+    background: rgba(10, 12, 20, 0.4);
     z-index: -1;
   }
-  /* 克苏鲁主窗口：暗紫石板，适度提亮 */
+  /* 克苏鲁主窗口：暗紫石板，适度提亮 + 半透明 */
   #game-wrapper {
-    background: #1e1f2e;
+    background: rgba(30, 31, 46, 0.85);
     padding: 6px;
     border-top: 2px solid #4a4a6e;
     border-left: 2px solid #4a4a6e;
@@ -105,7 +105,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #1e1f2e;
+    background: rgba(30, 31, 46, 0.6);
     padding: 4px;
     margin-bottom: 6px;
     border-top: 2px solid #1a1a2a;
@@ -138,7 +138,7 @@
     width: 36px;
     height: 36px;
     text-align: center;
-    background: #2a2b3e;
+    background: rgba(42, 43, 62, 0.7);
     border: none;
     border-top: 2px solid #5a5a7e;
     border-left: 2px solid #5a5a7e;
@@ -164,7 +164,7 @@
   /* 棋盘面板 */
   #board {
     display: grid;
-    background: #161724;
+    background: rgba(22, 23, 36, 0.5);
     border-top: 2px solid #1a1a2a;
     border-left: 2px solid #1a1a2a;
     border-right: 2px solid #4a4a6e;
@@ -177,7 +177,7 @@
     font-family: 'Arial', sans-serif;
     font-size: 14px;
     font-weight: bold;
-    background: #222338;
+    background: rgba(34, 35, 56, 0.6);
     color: #c0c0e0;
     display: flex;
     align-items: center;
@@ -195,12 +195,12 @@
   /* 翻开格子：腐蚀痕迹 */
   .cell.open {
     border: none;
-    background: #181a28;
+    background: rgba(24, 26, 40, 0.4);
     cursor: default;
   }
   /* 雷：血迹 */
   .cell.mine {
-    background: #4a1a1a;
+    background: rgba(74, 26, 26, 0.85);
     color: #ff3333;
     text-shadow: 0 0 5px rgba(255,0,0,0.4);
   }
