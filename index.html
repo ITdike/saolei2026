@@ -8,11 +8,12 @@
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   body {
     font-family: 'Microsoft YaHei', sans-serif;
-    /* Windows 95 经典青色桌面 + 4px 像素网格 */
-    background-color: #008080;
+    /* 克苏鲁深海深渊背景 */
+    background-color: #050508;
     background-image:
-      radial-gradient(circle, #007070 1px, transparent 1px);
-    background-size: 4px 4px;
+      radial-gradient(ellipse at 20% 80%, #0a0a1e 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, #0d0d1a 0%, transparent 60%),
+      radial-gradient(circle at 50% 50%, #08080f 0%, #020203 100%);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -22,15 +23,18 @@
     -webkit-user-select: none;
     touch-action: manipulation;
   }
-  /* 主窗口增加经典投影 */
+  /* 克苏鲁主窗口：暗色石质边框 + 邪能辉光 */
   #game-wrapper {
-    background: #c0c0c0;
-    padding: 4px;
-    border-top: 2px solid #ffffff;
-    border-left: 2px solid #ffffff;
-    border-right: 2px solid #808080;
-    border-bottom: 2px solid #808080;
-    box-shadow: 4px 4px 0px rgba(0,0,0,0.25);
+    background: #12121e;
+    padding: 6px;
+    border-top: 2px solid #2a2a4a;
+    border-left: 2px solid #2a2a4a;
+    border-right: 2px solid #05050a;
+    border-bottom: 2px solid #05050a;
+    box-shadow:
+      0 0 30px rgba(0, 80, 60, 0.2),
+      0 0 80px rgba(20, 0, 60, 0.15),
+      4px 4px 0px rgba(0,0,0,0.6);
   }
   /* 难度选择器 */
   #difficulty-bar {
@@ -40,7 +44,7 @@
     gap: 8px;
     margin-bottom: 6px;
     padding: 4px;
-    background: #c0c0c0;
+    background: #12121e;
     flex-wrap: wrap;
   }
   .diff-btn {
@@ -48,62 +52,68 @@
     font-size: 12px;
     font-weight: bold;
     padding: 4px 10px;
-    background: #c0c0c0;
+    background: #1a1a2e;
     border: none;
-    border-top: 2px solid #ffffff;
-    border-left: 2px solid #ffffff;
-    border-right: 2px solid #808080;
-    border-bottom: 2px solid #808080;
+    border-top: 2px solid #3a3a5e;
+    border-left: 2px solid #3a3a5e;
+    border-right: 2px solid #05050a;
+    border-bottom: 2px solid #05050a;
     cursor: pointer;
-    color: #000000;
+    color: #a0a0c0;
+    transition: color 0.2s;
   }
   .diff-btn.active {
-    border-top: 2px solid #808080;
-    border-left: 2px solid #808080;
-    border-right: 2px solid #ffffff;
-    border-bottom: 2px solid #ffffff;
-    background: #a0a0a0;
+    border-top: 2px solid #05050a;
+    border-left: 2px solid #05050a;
+    border-right: 2px solid #3a3a5e;
+    border-bottom: 2px solid #3a3a5e;
+    background: #2a0a0a;
+    color: #ff4444;
+    text-shadow: 0 0 4px rgba(255,0,0,0.3);
   }
-  /* 标记模式按钮（移动端专用） */
+  /* 标记模式 + 排行榜按钮 */
   #flag-mode-btn, #leaderboard-btn {
     font-family: 'Arial', sans-serif;
     font-size: 12px;
     font-weight: bold;
     padding: 4px 10px;
-    background: #c0c0c0;
+    background: #1a1a2e;
     border: none;
-    border-top: 2px solid #ffffff;
-    border-left: 2px solid #ffffff;
-    border-right: 2px solid #808080;
-    border-bottom: 2px solid #808080;
+    border-top: 2px solid #3a3a5e;
+    border-left: 2px solid #3a3a5e;
+    border-right: 2px solid #05050a;
+    border-bottom: 2px solid #05050a;
     cursor: pointer;
-    color: #000000;
+    color: #a0a0c0;
     margin-left: 8px;
   }
   #flag-mode-btn.active {
-    border-top: 2px solid #808080;
-    border-left: 2px solid #808080;
-    border-right: 2px solid #ffffff;
-    border-bottom: 2px solid #ffffff;
-    background: #ffcccc;
+    border-top: 2px solid #05050a;
+    border-left: 2px solid #05050a;
+    border-right: 2px solid #3a3a5e;
+    border-bottom: 2px solid #3a3a5e;
+    background: #2a0a1a;
+    color: #ff6666;
   }
+  /* 顶部状态栏 */
   #top-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #c0c0c0;
+    background: #12121e;
     padding: 4px;
     margin-bottom: 6px;
-    border-top: 2px solid #808080;
-    border-left: 2px solid #808080;
-    border-right: 2px solid #ffffff;
-    border-bottom: 2px solid #ffffff;
+    border-top: 2px solid #05050a;
+    border-left: 2px solid #05050a;
+    border-right: 2px solid #2a2a4a;
+    border-bottom: 2px solid #2a2a4a;
   }
+  /* LED 显示：血红色发光 */
   .led {
     font-family: 'Consolas', 'Courier New', monospace;
     font-size: 28px;
     font-weight: bold;
-    color: #ff0000;
+    color: #ff2222;
     background: #000000;
     padding: 2px 6px;
     min-width: 72px;
@@ -112,86 +122,105 @@
     letter-spacing: 2px;
     line-height: 32px;
     display: inline-block;
+    border: 2px solid #1a1a1a;
+    box-shadow: inset 0 0 8px rgba(255,0,0,0.15);
+    text-shadow: 0 0 3px rgba(255,0,0,0.3);
   }
+  /* 笑脸按钮 */
   #face-btn {
     font-family: 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
     font-size: 18px;
     width: 36px;
     height: 36px;
     text-align: center;
-    background: #c0c0c0;
+    background: #1a1a2e;
     border: none;
-    border-top: 2px solid #ffffff;
-    border-left: 2px solid #ffffff;
-    border-right: 2px solid #808080;
-    border-bottom: 2px solid #808080;
+    border-top: 2px solid #3a3a5e;
+    border-left: 2px solid #3a3a5e;
+    border-right: 2px solid #05050a;
+    border-bottom: 2px solid #05050a;
     cursor: pointer;
     user-select: none;
     display: flex;
     align-items: center;
     justify-content: center;
     outline: none;
+    color: #c0c0d0;
   }
   #face-btn:focus { outline: none; }
   #face-btn:active {
-    border-top: 2px solid #808080;
-    border-left: 2px solid #808080;
-    border-right: 2px solid #ffffff;
-    border-bottom: 2px solid #ffffff;
+    border-top: 2px solid #05050a;
+    border-left: 2px solid #05050a;
+    border-right: 2px solid #3a3a5e;
+    border-bottom: 2px solid #3a3a5e;
     padding-top: 1px;
     padding-left: 1px;
   }
+  /* 棋盘面板 */
   #board {
     display: grid;
-    background: #c0c0c0;
-    border-top: 2px solid #808080;
-    border-left: 2px solid #808080;
-    border-right: 2px solid #ffffff;
-    border-bottom: 2px solid #ffffff;
+    background: #0a0a12;
+    border-top: 2px solid #05050a;
+    border-left: 2px solid #05050a;
+    border-right: 2px solid #2a2a4a;
+    border-bottom: 2px solid #2a2a4a;
   }
+  /* 未翻开格子：深渊石板 */
   .cell {
     width: 28px;
     height: 28px;
     font-family: 'Arial', sans-serif;
     font-size: 14px;
     font-weight: bold;
-    background: #c0c0c0;
-    color: #000000;
+    background: #141420;
+    color: #a0a0c0;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     user-select: none;
     border: none;
-    border-top: 2px solid #ffffff;
-    border-left: 2px solid #ffffff;
-    border-right: 2px solid #808080;
-    border-bottom: 2px solid #808080;
+    border-top: 2px solid #2a2a4a;
+    border-left: 2px solid #2a2a4a;
+    border-right: 2px solid #05050a;
+    border-bottom: 2px solid #05050a;
     outline: none;
     -webkit-touch-callout: none;
   }
+  /* 翻开格子：腐蚀痕迹 */
   .cell.open {
     border: none;
-    background: #d3d3d3;
+    background: #0d0d16;
     cursor: default;
   }
-  .cell.mine { background: #ff0000; color: #000000; }
-  .cell.flag { color: #ff0000; }
-  .num-1 { color: #0000ff; }
-  .num-2 { color: #008000; }
-  .num-3 { color: #ff0000; }
-  .num-4 { color: #000080; }
-  .num-5 { color: #800000; }
-  .num-6 { color: #008080; }
-  .num-7 { color: #000000; }
-  .num-8 { color: #808080; }
+  /* 雷：血迹 */
+  .cell.mine {
+    background: #3a0a0a;
+    color: #ff0000;
+    text-shadow: 0 0 5px rgba(255,0,0,0.5);
+  }
+  /* 插旗：邪能标记 */
+  .cell.flag {
+    color: #ff4444;
+    text-shadow: 0 0 4px rgba(255,0,0,0.3);
+  }
+  /* 克苏鲁数字颜色：邪异发光 */
+  .num-1 { color: #4488ff; text-shadow: 0 0 3px rgba(68,136,255,0.3); }
+  .num-2 { color: #44aa44; text-shadow: 0 0 3px rgba(68,170,68,0.3); }
+  .num-3 { color: #ff4444; text-shadow: 0 0 3px rgba(255,68,68,0.3); }
+  .num-4 { color: #8844ff; text-shadow: 0 0 3px rgba(136,68,255,0.3); }
+  .num-5 { color: #cc4444; text-shadow: 0 0 3px rgba(204,68,68,0.3); }
+  .num-6 { color: #44cccc; text-shadow: 0 0 3px rgba(68,204,204,0.3); }
+  .num-7 { color: #8888aa; text-shadow: 0 0 3px rgba(136,136,170,0.3); }
+  .num-8 { color: #666688; text-shadow: 0 0 3px rgba(102,102,136,0.3); }
+  /* 状态栏 */
   #status-bar {
     margin-top: 8px;
     text-align: center;
     font-size: 12px;
-    color: #404040;
+    color: #666688;
   }
-  /* 移动端：缩小格子 */
+  /* 移动端 */
   @media (max-width: 900px) {
     .cell { width: 24px; height: 24px; font-size: 12px; }
   }
@@ -204,27 +233,29 @@
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0,0,0,0.7);
     align-items: center;
     justify-content: center;
     z-index: 100;
   }
   #lb-overlay.active { display: flex; }
   #lb-panel {
-    background: #c0c0c0;
+    background: #12121e;
     padding: 8px;
-    border-top: 2px solid #ffffff;
-    border-left: 2px solid #ffffff;
-    border-right: 2px solid #808080;
-    border-bottom: 2px solid #808080;
+    border-top: 2px solid #2a2a4a;
+    border-left: 2px solid #2a2a4a;
+    border-right: 2px solid #05050a;
+    border-bottom: 2px solid #05050a;
     min-width: 280px;
     max-width: 90vw;
+    box-shadow: 0 0 40px rgba(0,0,0,0.8);
   }
   #lb-title {
     text-align: center;
     font-weight: bold;
     font-size: 18px;
     margin-bottom: 8px;
+    color: #a0a0c0;
   }
   #lb-tabs {
     display: flex;
@@ -236,52 +267,56 @@
     font-family: 'Arial', sans-serif;
     font-size: 11px;
     padding: 3px 8px;
-    background: #c0c0c0;
+    background: #1a1a2e;
     border: none;
-    border-top: 2px solid #ffffff;
-    border-left: 2px solid #ffffff;
-    border-right: 2px solid #808080;
-    border-bottom: 2px solid #808080;
+    border-top: 2px solid #3a3a5e;
+    border-left: 2px solid #3a3a5e;
+    border-right: 2px solid #05050a;
+    border-bottom: 2px solid #05050a;
     cursor: pointer;
+    color: #a0a0c0;
   }
   .lb-tab.active {
-    border-top: 2px solid #808080;
-    border-left: 2px solid #808080;
-    border-right: 2px solid #ffffff;
-    border-bottom: 2px solid #ffffff;
-    background: #a0a0a0;
+    border-top: 2px solid #05050a;
+    border-left: 2px solid #05050a;
+    border-right: 2px solid #3a3a5e;
+    border-bottom: 2px solid #3a3a5e;
+    background: #2a0a0a;
+    color: #ff4444;
   }
   #lb-table {
     width: 100%;
     border-collapse: collapse;
     font-size: 14px;
+    color: #a0a0c0;
   }
   #lb-table th, #lb-table td {
-    border: 1px solid #808080;
+    border: 1px solid #2a2a4a;
     padding: 4px 8px;
     text-align: center;
   }
-  #lb-table th { background: #b0b0b0; font-weight: bold; }
+  #lb-table th { background: #1a1a2e; font-weight: bold; color: #c0c0e0; }
   #lb-close {
     display: block;
     margin: 8px auto 0;
     padding: 4px 16px;
     font-size: 14px;
-    background: #c0c0c0;
+    background: #1a1a2e;
     border: none;
-    border-top: 2px solid #ffffff;
-    border-left: 2px solid #ffffff;
-    border-right: 2px solid #808080;
-    border-bottom: 2px solid #808080;
+    border-top: 2px solid #3a3a5e;
+    border-left: 2px solid #3a3a5e;
+    border-right: 2px solid #05050a;
+    border-bottom: 2px solid #05050a;
     cursor: pointer;
+    color: #a0a0c0;
   }
   #lb-close:active {
-    border-top: 2px solid #808080;
-    border-left: 2px solid #808080;
-    border-right: 2px solid #ffffff;
-    border-bottom: 2px solid #ffffff;
+    border-top: 2px solid #05050a;
+    border-left: 2px solid #05050a;
+    border-right: 2px solid #3a3a5e;
+    border-bottom: 2px solid #3a3a5e;
   }
-  #lb-empty { text-align: center; color: #666; padding: 12px; font-size: 14px; }
+  #lb-empty { text-align: center; color: #555; padding: 12px; font-size: 14px; }
 </style>
 </head>
 <body>
@@ -463,7 +498,6 @@ function finish(success) {
     for (let r = 0; r < ROWS; r++)
       for (let c = 0; c < COLS; c++)
         if (mine[r][c]) flag[r][c] = true;
-    // 胜利记录排行榜
     if (!scoreSaved) {
       scoreSaved = true;
       setTimeout(() => {
@@ -520,14 +554,12 @@ function renderBoard() {
       } else if (flag[r][c]) { cell.classList.add('flag'); cell.textContent = 'F'; }
       else if (over && mine[r][c]) { cell.classList.add('open'); cell.textContent = '*'; }
 
-      // 鼠标
       cell.addEventListener('mousedown', (e) => {
         if (e.button === 0) handleOpen(r, c);
         else if (e.button === 2) handleFlag(r, c);
       });
       cell.addEventListener('contextmenu', e => e.preventDefault());
 
-      // 触摸
       let touchStartTime = 0;
       let touchTimer = null;
       cell.addEventListener('touchstart', (e) => {
@@ -564,16 +596,13 @@ flagModeBtn.addEventListener('click', () => {
 
 faceBtn.addEventListener('click', init);
 
-// 排行榜按钮
 document.getElementById('leaderboard-btn').addEventListener('click', () => {
   showLeaderboard(currentDiff);
   lbOverlay.classList.add('active');
 });
-// 排行榜标签切换
 document.querySelectorAll('.lb-tab').forEach(tab => {
   tab.addEventListener('click', () => showLeaderboard(tab.dataset.lb));
 });
-// 关闭排行榜
 lbOverlay.addEventListener('click', (e) => {
   if (e.target === lbOverlay) lbOverlay.classList.remove('active');
 });
