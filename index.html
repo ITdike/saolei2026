@@ -169,14 +169,14 @@
     background: transparent;
     border: none;
   }
-  /* 未翻开格子：纯边框线 */
+  /* 未翻开格子：像布一样遮住背景 */
   .cell {
     width: 28px;
     height: 28px;
     font-family: 'Arial', sans-serif;
     font-size: 14px;
     font-weight: bold;
-    background: transparent;
+    background: #1a1b2e;
     color: #e0e0ff;
     display: flex;
     align-items: center;
@@ -184,14 +184,14 @@
     cursor: pointer;
     user-select: none;
     border: none;
-    border-top: 2px solid rgba(74, 74, 110, 0.3);
-    border-left: 2px solid rgba(74, 74, 110, 0.3);
-    border-right: 2px solid rgba(10, 10, 20, 0.4);
-    border-bottom: 2px solid rgba(10, 10, 20, 0.4);
+    border-top: 2px solid #3a3a5e;
+    border-left: 2px solid #3a3a5e;
+    border-right: 2px solid #0a0a12;
+    border-bottom: 2px solid #0a0a12;
     outline: none;
     -webkit-touch-callout: none;
   }
-  /* 翻开格子：完全消失，背景完全可见 */
+  /* 翻开格子：布被揭开，完全消失 */
   .cell.open {
     border: none !important;
     background: transparent !important;
