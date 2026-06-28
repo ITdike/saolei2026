@@ -166,20 +166,20 @@
   /* 棋盘面板 */
   #board {
     display: grid;
-    background: rgba(22, 23, 36, 0.5);
+    background: rgba(22, 23, 36, 0.15);
     border-top: 2px solid #1a1a2a;
     border-left: 2px solid #1a1a2a;
     border-right: 2px solid #4a4a6e;
     border-bottom: 2px solid #4a4a6e;
   }
-  /* 未翻开格子：深渊石板 */
+  /* 未翻开格子：透明深渊 */
   .cell {
     width: 28px;
     height: 28px;
     font-family: 'Arial', sans-serif;
     font-size: 14px;
     font-weight: bold;
-    background: rgba(34, 35, 56, 0.6);
+    background: rgba(34, 35, 56, 0.25);
     color: #c0c0e0;
     display: flex;
     align-items: center;
@@ -187,22 +187,22 @@
     cursor: pointer;
     user-select: none;
     border: none;
-    border-top: 2px solid #4a4a6e;
-    border-left: 2px solid #4a4a6e;
-    border-right: 2px solid #1a1a2a;
-    border-bottom: 2px solid #1a1a2a;
+    border-top: 2px solid rgba(74, 74, 110, 0.4);
+    border-left: 2px solid rgba(74, 74, 110, 0.4);
+    border-right: 2px solid rgba(10, 10, 20, 0.5);
+    border-bottom: 2px solid rgba(10, 10, 20, 0.5);
     outline: none;
     -webkit-touch-callout: none;
   }
-  /* 翻开格子：腐蚀痕迹 */
+  /* 翻开格子：更透明 */
   .cell.open {
     border: none;
-    background: rgba(24, 26, 40, 0.4);
+    background: rgba(24, 26, 40, 0.1);
     cursor: default;
   }
-  /* 雷：血迹 */
+  /* 雷：半透明血迹 */
   .cell.mine {
-    background: rgba(74, 26, 26, 0.85);
+    background: rgba(74, 26, 26, 0.4);
     color: #ff3333;
     text-shadow: 0 0 5px rgba(255,0,0,0.4);
   }
