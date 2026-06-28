@@ -169,14 +169,14 @@
     background: transparent;
     border: none;
   }
-  /* 未翻开格子：像布一样遮住背景 */
+  /* 未翻开格子：半透明布 */
   .cell {
     width: 28px;
     height: 28px;
     font-family: 'Arial', sans-serif;
     font-size: 14px;
     font-weight: bold;
-    background: #1a1b2e;
+    background: rgba(26, 27, 46, 0.5);
     color: #e0e0ff;
     display: flex;
     align-items: center;
@@ -184,30 +184,32 @@
     cursor: pointer;
     user-select: none;
     border: none;
-    border-top: 2px solid #3a3a5e;
-    border-left: 2px solid #3a3a5e;
-    border-right: 2px solid #0a0a12;
-    border-bottom: 2px solid #0a0a12;
+    border-top: 2px solid rgba(74, 74, 110, 0.4);
+    border-left: 2px solid rgba(74, 74, 110, 0.4);
+    border-right: 2px solid rgba(10, 10, 20, 0.5);
+    border-bottom: 2px solid rgba(10, 10, 20, 0.5);
     outline: none;
     -webkit-touch-callout: none;
   }
-  /* 翻开格子：布被揭开，完全消失 */
+  /* 翻开格子：几乎透明但数字可见 */
   .cell.open {
     border: none !important;
-    background: transparent !important;
-    color: transparent !important;
+    background: rgba(26, 27, 46, 0.15) !important;
+    color: #e0e0ff !important;
     text-shadow: none !important;
     cursor: default;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
-  /* 翻开格子内的数字/内容也隐藏 */
-  .cell.open * {
-    display: none;
+  /* 翻开格子内的数字保持可见 */
+  .cell.open .num-1, .cell.open .num-2, .cell.open .num-3,
+  .cell.open .num-4, .cell.open .num-5, .cell.open .num-6,
+  .cell.open .num-7, .cell.open .num-8 {
+    display: inline;
   }
   /* 雷：淡红背景 */
   .cell.mine {
-    background: rgba(74, 26, 26, 0.1);
+    background: rgba(74, 26, 26, 0.3);
     color: #ff3333;
     text-shadow: 0 0 6px rgba(255,0,0,0.6);
   }
