@@ -35,6 +35,7 @@
     margin-bottom: 6px;
     padding: 4px;
     background: #c0c0c0;
+    flex-wrap: wrap;
   }
   .diff-btn {
     font-family: 'Arial', sans-serif;
@@ -58,7 +59,7 @@
     background: #a0a0a0;
   }
   /* 标记模式按钮（移动端专用） */
-  #flag-mode-btn {
+  #flag-mode-btn, #leaderboard-btn {
     font-family: 'Arial', sans-serif;
     font-size: 12px;
     font-weight: bold;
@@ -71,7 +72,7 @@
     border-bottom: 2px solid #808080;
     cursor: pointer;
     color: #000000;
-    margin-left: 12px;
+    margin-left: 8px;
   }
   #flag-mode-btn.active {
     border-top: 2px solid #808080;
@@ -141,7 +142,6 @@
     border-left: 2px solid #808080;
     border-right: 2px solid #ffffff;
     border-bottom: 2px solid #ffffff;
-    /* width/height 由 JS 动态设置 */
   }
   .cell {
     width: 28px;
@@ -192,6 +192,90 @@
   @media (max-width: 400px) {
     .cell { width: 20px; height: 20px; font-size: 10px; }
   }
+  /* 排行榜弹窗 */
+  #lb-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+  }
+  #lb-overlay.active { display: flex; }
+  #lb-panel {
+    background: #c0c0c0;
+    padding: 8px;
+    border-top: 2px solid #ffffff;
+    border-left: 2px solid #ffffff;
+    border-right: 2px solid #808080;
+    border-bottom: 2px solid #808080;
+    min-width: 280px;
+    max-width: 90vw;
+  }
+  #lb-title {
+    text-align: center;
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+  #lb-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+  .lb-tab {
+    font-family: 'Arial', sans-serif;
+    font-size: 11px;
+    padding: 3px 8px;
+    background: #c0c0c0;
+    border: none;
+    border-top: 2px solid #ffffff;
+    border-left: 2px solid #ffffff;
+    border-right: 2px solid #808080;
+    border-bottom: 2px solid #808080;
+    cursor: pointer;
+  }
+  .lb-tab.active {
+    border-top: 2px solid #808080;
+    border-left: 2px solid #808080;
+    border-right: 2px solid #ffffff;
+    border-bottom: 2px solid #ffffff;
+    background: #a0a0a0;
+  }
+  #lb-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  #lb-table th, #lb-table td {
+    border: 1px solid #808080;
+    padding: 4px 8px;
+    text-align: center;
+  }
+  #lb-table th { background: #b0b0b0; font-weight: bold; }
+  #lb-close {
+    display: block;
+    margin: 8px auto 0;
+    padding: 4px 16px;
+    font-size: 14px;
+    background: #c0c0c0;
+    border: none;
+    border-top: 2px solid #ffffff;
+    border-left: 2px solid #ffffff;
+    border-right: 2px solid #808080;
+    border-bottom: 2px solid #808080;
+    cursor: pointer;
+  }
+  #lb-close:active {
+    border-top: 2px solid #808080;
+    border-left: 2px solid #808080;
+    border-right: 2px solid #ffffff;
+    border-bottom: 2px solid #ffffff;
+  }
+  #lb-empty { text-align: center; color: #666; padding: 12px; font-size: 14px; }
 </style>
 </head>
 <body>
@@ -201,6 +285,7 @@
     <button class="diff-btn" data-diff="intermediate">中级 16×16</button>
     <button class="diff-btn active" data-diff="expert">高级 16×30</button>
     <button id="flag-mode-btn">🚩 标记模式</button>
+    <button id="leaderboard-btn">🏆 排行榜</button>
   </div>
   <div id="top-bar">
     <div id="mine-count" class="led">099</div>
@@ -211,34 +296,87 @@
   <div id="status-bar">左键翻格 · 右键插旗 · 点击笑脸重开</div>
 </div>
 
+<!-- 排行榜弹窗 -->
+<div id="lb-overlay">
+  <div id="lb-panel">
+    <div id="lb-title">🏆 排行榜</div>
+    <div id="lb-tabs">
+      <button class="lb-tab" data-lb="beginner">初级</button>
+      <button class="lb-tab" data-lb="intermediate">中级</button>
+      <button class="lb-tab active" data-lb="expert">高级</button>
+    </div>
+    <table id="lb-table">
+      <thead><tr><th>排名</th><th>玩家</th><th>用时(秒)</th><th>日期</th></tr></thead>
+      <tbody id="lb-body"></tbody>
+    </table>
+    <button id="lb-close">关闭</button>
+  </div>
+</div>
+
 <script>
-// 难度配置
+// ===================== 难度配置 =====================
 const DIFFICULTIES = {
-  beginner:     { ROWS: 10, COLS: 9,  MINES: 10 },
-  intermediate: { ROWS: 16, COLS: 16, MINES: 40 },
-  expert:       { ROWS: 16, COLS: 30, MINES: 99 }
+  beginner:     { ROWS: 10, COLS: 9,  MINES: 10, NAME: '初级' },
+  intermediate: { ROWS: 16, COLS: 16, MINES: 40, NAME: '中级' },
+  expert:       { ROWS: 16, COLS: 30, MINES: 99, NAME: '高级' }
 };
 
-// 动态获取当前难度参数
-function getConfig() {
-  return DIFFICULTIES[currentDiff];
-}
+function getConfig() { return DIFFICULTIES[currentDiff]; }
 
 let currentDiff = 'expert';
 let ROWS, COLS, MINES;
 let board = [], open = [], flag = [], mine = [];
 let placed = false, over = false, won = false;
 let flags = 0, seconds = 0, timerInterval = null;
-let flagMode = false; // 标记模式开关（移动端用）
+let flagMode = false;
+let scoreSaved = false;
 
 const boardEl = document.getElementById('board');
 const faceBtn = document.getElementById('face-btn');
 const mineCountEl = document.getElementById('mine-count');
 const timerEl = document.getElementById('timer');
 const flagModeBtn = document.getElementById('flag-mode-btn');
+const lbOverlay = document.getElementById('lb-overlay');
+const lbBody = document.getElementById('lb-body');
 
 const DIRS = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+const LS_KEY = 'saolei2026_leaderboard';
 
+// ===================== localStorage 排行榜 =====================
+function getLeaderboard() {
+  try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; }
+  catch { return {}; }
+}
+function saveLeaderboard(data) {
+  localStorage.setItem(LS_KEY, JSON.stringify(data));
+}
+function addScore(name, time, diff) {
+  const data = getLeaderboard();
+  if (!data[diff]) data[diff] = [];
+  const now = new Date();
+  const dateStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
+  data[diff].push({ name: name.trim().slice(0,8) || '匿名', time, date: dateStr });
+  data[diff].sort((a, b) => a.time - b.time);
+  data[diff] = data[diff].slice(0, 10);
+  saveLeaderboard(data);
+}
+function showLeaderboard(diff) {
+  const data = getLeaderboard();
+  const list = data[diff] || [];
+  document.querySelectorAll('.lb-tab').forEach(t => t.classList.toggle('active', t.dataset.lb === diff));
+  lbBody.innerHTML = '';
+  if (list.length === 0) {
+    lbBody.innerHTML = '<tr><td colspan="4" id="lb-empty">暂无记录</td></tr>';
+  } else {
+    list.forEach((item, i) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${i+1}</td><td>${item.name}</td><td>${item.time}</td><td>${item.date}</td>`;
+      lbBody.appendChild(tr);
+    });
+  }
+}
+
+// ===================== 游戏逻辑 =====================
 function setDifficulty(diff) {
   currentDiff = diff;
   document.querySelectorAll('.diff-btn').forEach(btn => {
@@ -254,9 +392,8 @@ function init() {
   open = Array(ROWS).fill().map(() => Array(COLS).fill(false));
   flag = Array(ROWS).fill().map(() => Array(COLS).fill(false));
   mine = Array(ROWS).fill().map(() => Array(COLS).fill(false));
-  placed = false; over = false; won = false; flags = 0; seconds = 0;
+  placed = false; over = false; won = false; flags = 0; seconds = 0; scoreSaved = false;
   clearInterval(timerInterval); timerInterval = null;
-  // 动态调整棋盘网格
   const cellSize = window.innerWidth <= 400 ? 20 : (window.innerWidth <= 900 ? 24 : 28);
   boardEl.style.gridTemplateColumns = `repeat(${COLS}, ${cellSize}px)`;
   boardEl.style.gridTemplateRows = `repeat(${ROWS}, ${cellSize}px)`;
@@ -320,6 +457,14 @@ function finish(success) {
     for (let r = 0; r < ROWS; r++)
       for (let c = 0; c < COLS; c++)
         if (mine[r][c]) flag[r][c] = true;
+    // 胜利记录排行榜
+    if (!scoreSaved) {
+      scoreSaved = true;
+      setTimeout(() => {
+        const name = prompt(`🎉 恭喜通关！\n用时 ${seconds} 秒\n请输入你的名字：`) || '匿名';
+        addScore(name, seconds, currentDiff);
+      }, 100);
+    }
   }
 }
 
@@ -369,51 +514,42 @@ function renderBoard() {
       } else if (flag[r][c]) { cell.classList.add('flag'); cell.textContent = 'F'; }
       else if (over && mine[r][c]) { cell.classList.add('open'); cell.textContent = '*'; }
 
-      // 桌面端鼠标事件
+      // 鼠标
       cell.addEventListener('mousedown', (e) => {
         if (e.button === 0) handleOpen(r, c);
         else if (e.button === 2) handleFlag(r, c);
       });
       cell.addEventListener('contextmenu', e => e.preventDefault());
 
-      // 移动端触摸事件：长按插旗，短按翻格
+      // 触摸
       let touchStartTime = 0;
       let touchTimer = null;
       cell.addEventListener('touchstart', (e) => {
         e.preventDefault();
         touchStartTime = Date.now();
-        touchTimer = setTimeout(() => {
-          handleFlag(r, c);
-          touchTimer = null;
-        }, 500);
+        touchTimer = setTimeout(() => { handleFlag(r, c); touchTimer = null; }, 500);
       }, { passive: false });
       cell.addEventListener('touchend', (e) => {
         e.preventDefault();
         if (touchTimer) {
-          clearTimeout(touchTimer);
-          touchTimer = null;
-          const elapsed = Date.now() - touchStartTime;
-          if (elapsed < 500) {
-            if (flagMode) handleFlag(r, c);
-            else handleOpen(r, c);
+          clearTimeout(touchTimer); touchTimer = null;
+          if (Date.now() - touchStartTime < 500) {
+            flagMode ? handleFlag(r, c) : handleOpen(r, c);
           }
         }
       });
-      cell.addEventListener('touchmove', (e) => {
-        if (touchTimer) { clearTimeout(touchTimer); touchTimer = null; }
-      });
+      cell.addEventListener('touchmove', (e) => { if (touchTimer) { clearTimeout(touchTimer); touchTimer = null; } });
 
       boardEl.appendChild(cell);
     }
   }
 }
 
-// 难度按钮事件
+// ===================== 事件绑定 =====================
 document.querySelectorAll('.diff-btn').forEach(btn => {
   btn.addEventListener('click', () => setDifficulty(btn.dataset.diff));
 });
 
-// 标记模式切换
 flagModeBtn.addEventListener('click', () => {
   flagMode = !flagMode;
   flagModeBtn.classList.toggle('active', flagMode);
@@ -421,6 +557,21 @@ flagModeBtn.addEventListener('click', () => {
 });
 
 faceBtn.addEventListener('click', init);
+
+// 排行榜按钮
+document.getElementById('leaderboard-btn').addEventListener('click', () => {
+  showLeaderboard(currentDiff);
+  lbOverlay.classList.add('active');
+});
+// 排行榜标签切换
+document.querySelectorAll('.lb-tab').forEach(tab => {
+  tab.addEventListener('click', () => showLeaderboard(tab.dataset.lb));
+});
+// 关闭排行榜
+lbOverlay.addEventListener('click', (e) => {
+  if (e.target === lbOverlay) lbOverlay.classList.remove('active');
+});
+document.getElementById('lb-close').addEventListener('click', () => lbOverlay.classList.remove('active'));
 
 init();
 </script>
