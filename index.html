@@ -169,14 +169,14 @@
     background: transparent;
     border: none;
   }
-  /* 未翻开格子：几乎完全透明，仅边框 */
+  /* 未翻开格子：纯边框线 */
   .cell {
     width: 28px;
     height: 28px;
     font-family: 'Arial', sans-serif;
     font-size: 14px;
     font-weight: bold;
-    background: rgba(34, 35, 56, 0.08);
+    background: transparent;
     color: #e0e0ff;
     display: flex;
     align-items: center;
@@ -184,24 +184,24 @@
     cursor: pointer;
     user-select: none;
     border: none;
-    border-top: 2px solid rgba(74, 74, 110, 0.35);
-    border-left: 2px solid rgba(74, 74, 110, 0.35);
-    border-right: 2px solid rgba(10, 10, 20, 0.45);
-    border-bottom: 2px solid rgba(10, 10, 20, 0.45);
+    border-top: 2px solid rgba(74, 74, 110, 0.3);
+    border-left: 2px solid rgba(74, 74, 110, 0.3);
+    border-right: 2px solid rgba(10, 10, 20, 0.4);
+    border-bottom: 2px solid rgba(10, 10, 20, 0.4);
     outline: none;
     -webkit-touch-callout: none;
-    backdrop-filter: blur(1px);
   }
-  /* 翻开格子：几乎完全透明 */
+  /* 翻开格子：完全消失，仅文字浮在背景 */
   .cell.open {
     border: none;
-    background: rgba(24, 26, 40, 0.05);
+    background: transparent;
     cursor: default;
-    backdrop-filter: blur(0px);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
-  /* 雷：仅文字发光 */
+  /* 雷：淡红背景 */
   .cell.mine {
-    background: rgba(74, 26, 26, 0.15);
+    background: rgba(74, 26, 26, 0.1);
     color: #ff3333;
     text-shadow: 0 0 6px rgba(255,0,0,0.6);
   }
