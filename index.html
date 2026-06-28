@@ -163,48 +163,47 @@
     padding-top: 1px;
     padding-left: 1px;
   }
-  /* 棋盘面板 */
+  /* 棋盘面板：完全融入背景 */
   #board {
     display: grid;
-    background: rgba(22, 23, 36, 0.15);
-    border-top: 2px solid #1a1a2a;
-    border-left: 2px solid #1a1a2a;
-    border-right: 2px solid #4a4a6e;
-    border-bottom: 2px solid #4a4a6e;
+    background: transparent;
+    border: none;
   }
-  /* 未翻开格子：透明深渊 */
+  /* 未翻开格子：几乎完全透明，仅边框 */
   .cell {
     width: 28px;
     height: 28px;
     font-family: 'Arial', sans-serif;
     font-size: 14px;
     font-weight: bold;
-    background: rgba(34, 35, 56, 0.25);
-    color: #c0c0e0;
+    background: rgba(34, 35, 56, 0.08);
+    color: #e0e0ff;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     user-select: none;
     border: none;
-    border-top: 2px solid rgba(74, 74, 110, 0.4);
-    border-left: 2px solid rgba(74, 74, 110, 0.4);
-    border-right: 2px solid rgba(10, 10, 20, 0.5);
-    border-bottom: 2px solid rgba(10, 10, 20, 0.5);
+    border-top: 2px solid rgba(74, 74, 110, 0.35);
+    border-left: 2px solid rgba(74, 74, 110, 0.35);
+    border-right: 2px solid rgba(10, 10, 20, 0.45);
+    border-bottom: 2px solid rgba(10, 10, 20, 0.45);
     outline: none;
     -webkit-touch-callout: none;
+    backdrop-filter: blur(1px);
   }
-  /* 翻开格子：更透明 */
+  /* 翻开格子：几乎完全透明 */
   .cell.open {
     border: none;
-    background: rgba(24, 26, 40, 0.1);
+    background: rgba(24, 26, 40, 0.05);
     cursor: default;
+    backdrop-filter: blur(0px);
   }
-  /* 雷：半透明血迹 */
+  /* 雷：仅文字发光 */
   .cell.mine {
-    background: rgba(74, 26, 26, 0.4);
+    background: rgba(74, 26, 26, 0.15);
     color: #ff3333;
-    text-shadow: 0 0 5px rgba(255,0,0,0.4);
+    text-shadow: 0 0 6px rgba(255,0,0,0.6);
   }
   /* 插旗：邪能标记 */
   .cell.flag {
